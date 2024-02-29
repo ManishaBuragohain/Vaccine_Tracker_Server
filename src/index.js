@@ -9,26 +9,44 @@ app.use(cors());
 
 app.get("/findByPin", (req, res) => {
   try {
-
     const pincode = req.query.pincode;
     const date = req.query.date;
 
-     if (!pincode || !date) {
+    if (!pincode || !date) {
       return res
         .status(400)
         .send({ error: "Both pincode and date are required parameters." });
     }
 
-    const shuffled = [...statistics].sort(() => 0.5 - Math.random()); 
-    const slotList = shuffled.slice(0, 6).map((s) => ({
-      ...s,
-      pincode: pincode,
-    }));
+    // const shuffled = [...statistics].sort(() => 0.5 - Math.random());
+    // const slotList = shuffled.slice(0, 6).map((s) => ({
+    //   ...s,
+    //   pincode: pincode,
+    // }));
+
+    // const responseData = {
+    //   statistics: slotList,
+    // };
+
+    const randomNumber = Math.random(); // Generate a random number between 0 and 1
+
+    let slotList;
+
+    if (randomNumber < 0.5) {
+      // Randomly decide whether to populate slotList or keep it empty
+      slotList = [];
+    } else {
+      const shuffled = [...statistics].sort(() => 0.5 - Math.random());
+      slotList = shuffled.slice(0, 6).map((s) => ({
+        ...s,
+        pincode: pincode,
+      }));
+    }
 
     const responseData = {
       statistics: slotList,
     };
-   
+
     res.status(200).json(responseData);
   } catch (error) {
     res.status(400).json({ message: "An error occurred", error });
